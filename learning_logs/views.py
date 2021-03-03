@@ -61,6 +61,7 @@ def new_topic(request):
 @login_required
 def new_entry(request, topic_id):
     """Добавляет новую запись по конкретной темею"""
+    topic = get_object_or_404(Topic, id=topic_id)
     topic = Topic.objects.get(id=topic_id)
     check_topic_owner(request, topic)
 
@@ -84,6 +85,7 @@ def new_entry(request, topic_id):
 @login_required
 def edit_entry(request, entry_id):
     """Редактирует существующую запись."""
+    topic = get_object_or_404(Entry, id=entry_id)
     entry = Entry.objects.get(id=entry_id)
     topic = entry.topic
     check_topic_owner(request, topic)
