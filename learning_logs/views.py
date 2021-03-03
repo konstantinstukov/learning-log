@@ -8,7 +8,7 @@ from .forms import TopicForm, EntryForm
 
 # Проверка того, что тема принадлежит текущему пользователю.
 def check_topic_owner(request, topic):
-    if topic.owner != request.user:
+    if topic.owner != request.user and request.user.is_staff != True:
         raise Http404
 
 
@@ -19,8 +19,12 @@ def index(request):
 
 @login_required
 def topics(request):
-    """Выводит все темы."""
-    topics = Topic.objects.filter(owner=request.user).order_by('date_added')
+    """Выводит все темы после проверки на админа"""
+    if request.user.is_staff:
+        topics = Topic.objects.order_by('date_added')
+    else:
+        topics = Topic.objects.filter(owner=request.user).order_by('date_added')
+
     context = {'topics': topics}
     return render(request, 'learning_logs/topics.html', context)
 
