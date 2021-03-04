@@ -6,7 +6,7 @@ from .models import Topic, Entry
 from .forms import TopicForm, EntryForm
 
 
-# Проверка того, что тема принадлежит текущему пользователю.
+# Проверка того, что тема принадлежит текущему пользователю или пользователь является Админом.
 def check_topic_owner(request, topic):
     if topic.owner != request.user and request.user.is_staff != True:
         raise Http404
@@ -19,7 +19,7 @@ def index(request):
 
 @login_required
 def topics(request):
-    """Выводит все темы после проверки на админа"""
+    """Выводит все темы пользователя, после проверки на админа"""
     if request.user.is_staff:
         topics = Topic.objects.order_by('date_added')
     else:
@@ -34,7 +34,7 @@ def topic(request, topic_id):
     """Выводит одну тему и все ее записи."""
     topic = get_object_or_404(Topic, id=topic_id)
     topic = Topic.objects.get(id=topic_id)
-    # Проверка того, что тема принадлежит текущему пользователю.
+
     check_topic_owner(request, topic)
 
     entries = topic.entry_set.order_by('-date_added')
@@ -67,6 +67,7 @@ def new_entry(request, topic_id):
     """Добавляет новую запись по конкретной темею"""
     topic = get_object_or_404(Topic, id=topic_id)
     topic = Topic.objects.get(id=topic_id)
+
     check_topic_owner(request, topic)
 
     if request.method != 'POST':
@@ -92,6 +93,7 @@ def edit_entry(request, entry_id):
     topic = get_object_or_404(Entry, id=entry_id)
     entry = Entry.objects.get(id=entry_id)
     topic = entry.topic
+
     check_topic_owner(request, topic)
 
     if request.method != 'POST':
