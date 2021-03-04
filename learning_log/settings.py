@@ -59,7 +59,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 ROOT_URLCONF = 'learning_log.urls'
 
@@ -87,8 +90,12 @@ WSGI_APPLICATION = 'learning_log.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'learning_log_db',
+        'USER': 'll_admin_db',
+        'PASSWORD': 'Alexultima93',
+        'HOST': 'https://git.heroku.com/salty-garden-88938.git',
+        'PORT': '',
     }
 }
 
@@ -142,3 +149,8 @@ if os.environ.get('DEBUG') == 'TRUE':
     DEBUG = True
 elif os.environ.get('DEBUG') == 'FALSE':
     DEBUG = False
+
+# Heroku: Update database configuration from $DATABASE_URL.
+import dj_database_url
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)

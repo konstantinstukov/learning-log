@@ -1,3 +1,6 @@
+ll_env_mac/
+ll_env_win/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
